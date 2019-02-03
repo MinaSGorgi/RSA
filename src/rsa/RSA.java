@@ -9,26 +9,22 @@ public class RSA {
     private final static BigInteger COMMON_PUBLIC_KEY = new BigInteger("65537");
     private final static BigInteger BI_ONE = new BigInteger("1");
 
-    private final BigInteger modulus;
-    private final BigInteger publicKey = COMMON_PUBLIC_KEY;
+    public final BigInteger modulus;
+    public final BigInteger publicKey = COMMON_PUBLIC_KEY;
     private final BigInteger privateKey;
-
-    private static BigInteger bigIntegerLcm(BigInteger a, BigInteger b) {
-        return a.multiply(b).divide(a.gcd(b));
-    }
 
     RSA(int nBits) {
         BigInteger p;
         BigInteger q;
-        BigInteger lambda;
+        BigInteger phi;
         do {
             p = BigInteger.probablePrime(nBits / 2, random);
             q = BigInteger.probablePrime(nBits / 2, random);
-            lambda = bigIntegerLcm(p.subtract(BI_ONE), q.subtract(BI_ONE));
-        } while(!publicKey.gcd(lambda).equals(BI_ONE));
+            phi = p.subtract(BI_ONE).multiply(q.subtract(BI_ONE));
+        } while(!publicKey.gcd(phi).equals(BI_ONE));
 
         modulus    = p.multiply(q);
-        privateKey = publicKey.modInverse(lambda);
+        privateKey = publicKey.modInverse(phi);
     }
 
     BigInteger encrypt(BigInteger message) {
@@ -41,7 +37,8 @@ public class RSA {
 
     public String toString() {
         return "public  = " + publicKey  + "\n"
-                + "private = " + privateKey;
+                + "private = " + privateKey + "\n"
+                + "modulus = " + modulus;
     }
 
     public static void main(String[] args) {
