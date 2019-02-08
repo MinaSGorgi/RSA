@@ -7,12 +7,14 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.math.BigInteger;
 import java.util.Random;
 
 
 public class EncryptionGraph extends Application {
-    private final static int NUM_RUNS = 10000;
+    private final static int NUM_RUNS = 10;
     private final static int NANO_TO_MICRO = (int) Math.pow(10, 3);
 
     @Override
@@ -30,17 +32,18 @@ public class EncryptionGraph extends Application {
         XYChart.Series series = new XYChart.Series();
         series.setName("RSA");
 
-        for (int size = 32; size <= 2048; size *= 2) {
+        ThreadMXBean thread = ManagementFactory.getThreadMXBean();
+        for (int size = 4; size <= 2048; size *= 2) {
             System.out.println("Key Size: " + size);
 
             BigInteger message = new BigInteger(size - 1, random);
             RSA rsa = new RSA(size);
 
-            long start = System.nanoTime();
+            long start = thread.getCurrentThreadCpuTime();
             for(int run = 0; run < NUM_RUNS; ++run) {
                 rsa.encrypt(message);
             }
-            long end = System.nanoTime();
+            long end = thread.getCurrentThreadCpuTime();
             long duration = (end - start) / NUM_RUNS;
 
             series.getData().add(new XYChart.Data(size, duration / NANO_TO_MICRO));

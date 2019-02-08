@@ -7,7 +7,12 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
+
 public class MathAttackGraph extends Application {
+    private final static int NUM_RUNS = 10;
+    private final static int NANO_TO_MICRO = (int) Math.pow(10, 3);
 
     @Override
     public void start(Stage stage) {
@@ -22,13 +27,18 @@ public class MathAttackGraph extends Application {
         XYChart.Series series = new XYChart.Series();
         series.setName("Math Attack");
 
-        for (int size = 32; size <= 64; ++size) {
+        ThreadMXBean thread = ManagementFactory.getThreadMXBean();
+        for (int size = 32; size <= 80; ++size) {
             System.out.println("Key Size: " + size);
 
             RSA rsa = new RSA(size);
-            MathAttack mathAttack = new MathAttack(rsa.publicKey, rsa.modulus);
 
-            series.getData().add(new XYChart.Data(size, mathAttack.nSteps));
+            long start = thread.getCurrentThreadCpuTime();
+            new MathAttack(rsa.publicKey, rsa.modulus);
+            long end = thread.getCurrentThreadCpuTime();
+            long duration = (end - start) / NUM_RUNS;
+
+            series.getData().add(new XYChart.Data(size, duration / NANO_TO_MICRO));
         }
 
         Scene scene  = new Scene(lineChart, 800, 600);
