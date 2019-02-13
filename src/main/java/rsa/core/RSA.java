@@ -1,37 +1,46 @@
-package rsa;
+package core;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
 
 public class RSA {
+    public class RSAException extends Exception { 
+        public RSAException(String errorMessage) {
+            super(errorMessage);
+        }
+    }
+
     private final static SecureRandom random = new SecureRandom();
     private final static BigInteger COMMON_PUBLIC_KEY = new BigInteger("65537");
-    private final static BigInteger BI_ONE = new BigInteger("1");
 
     public final BigInteger modulus;
     public final BigInteger publicKey = COMMON_PUBLIC_KEY;
     private final BigInteger privateKey;
 
-    RSA(int nBits) {
+    public RSA(int nBits) {
         BigInteger p;
         BigInteger q;
         BigInteger phi;
         do {
             p = BigInteger.probablePrime(nBits / 2, random);
             q = BigInteger.probablePrime(nBits / 2, random);
-            phi = p.subtract(BI_ONE).multiply(q.subtract(BI_ONE));
-        } while(!publicKey.gcd(phi).equals(BI_ONE));
+            phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+        } while(!publicKey.gcd(phi).equals(BigInteger.ONE));
 
         modulus    = p.multiply(q);
         privateKey = publicKey.modInverse(phi);
     }
 
-    BigInteger encrypt(BigInteger message) {
+    public BigInteger encrypt(BigInteger message) throws RSAException {
+        if (message.compareTo(modulus) >= 0) {
+            throw new RSAException("Message: " + message + " is >= modulus: " + modulus);
+        }
+
         return message.modPow(publicKey, modulus);
     }
 
-    BigInteger decrypt(BigInteger encrypted) {
+    public BigInteger decrypt(BigInteger encrypted) {
         return encrypted.modPow(privateKey, modulus);
     }
 
@@ -41,7 +50,7 @@ public class RSA {
                 + "modulus = " + modulus;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RSAException {
         BigInteger message = new BigInteger(args[0]);
         int nBits = Integer.parseInt(args[1]);
 
