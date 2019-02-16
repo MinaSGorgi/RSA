@@ -3,3 +3,63 @@
 Java implementation for RSA algorithm. Including: Encryption, Decryption, Mathematical attack and Chosen Ciphertext attack. Along with some graphs for Encryption time against Key size and Crack time for Mathematical attack against Key size.
 
 For building most files a simple javac followed by java is sufficient. For graphs, linking to javafx is required.
+
+For more info check [Report.md](assets/Report.md)
+
+## Usage
+
+**[RSA.java:](src/main/java/rsa/core/RSA.java)**
+
+```console
+java RSA <message> <key size>
+```
+
+**Example:**
+
+```console
+$ java RSA 123456 256
+
+public  = 65537
+private = 918350825889598730612884754855286080917835737783369769299975325737606264193
+modulus = 54516266373484268123348395089629423809448476484967370282562576602408890372079
+encrypted = 46353133933985245905238077722508135821614726273880596199400531980279236036366
+decrypted = 123456
+```
+
+**[MathAttack.java:](src/main/java/rsa/attacks/MathAttack.java)**
+
+```console
+java MathAttack <message> <key size>
+```
+
+**Example:**
+
+```console
+$ java MathAttack 123456 32
+
+public  = 65537
+private = 1226056193
+modulus = 1466595643
+message = 123456
+cracked = 123456
+Success!
+```
+
+**[ChosenCipherTextAttack.java:](src/main/java/rsa/attacks/ChosenCipherTextAttack.java)**
+
+```console
+java ChosenCipherTextAttack <message> <key size>
+```
+
+**Example:**
+
+```console
+$ java ChosenCipherTextAttack 123456 1024
+
+public  = 65537
+private = 18725573098282057244897358153609925053050495690862598717210115559334053351344819648420601502408121192262001478573674857473591526979794008658916281245684773816744056269983906210157316300544025352055843690934468591313777508110799963553777942491089970930306683239774692307635088881873551518602009366229193917309
+modulus = 74228384693770712251789642612540595064523700241460239044928285454066161887563385066142923889392187659667016929854408101025026789068817513184503497489774590800120896450272507820408353589520296142792977958854662915631635536630670720714806474049544512325834971018292412132934858765546709587071660108318013622709
+message = 123456
+cracked = 123456
+Success!
+```
