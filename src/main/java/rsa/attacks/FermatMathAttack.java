@@ -11,17 +11,14 @@ public class FermatMathAttack {
     public FermatMathAttack(BigInteger publicKey, BigInteger modulus) {
         this.modulus = modulus;
         BigInteger k;
-        BigInteger[] temp = modulus.sqrtAndRemainder();
-        k = temp[1].equals(BigInteger.ZERO) ? temp[0] : temp[0].add(BigInteger.ONE);
+        BigInteger root = modulus.sqrt();
+        k = root.pow(2).equals(modulus) ? root : root.add(BigInteger.ONE);
         BigInteger h;
-        BigInteger reminder;
         BigInteger step = BigInteger.ZERO;
         do {
-            BigInteger[] result = k.add(step).pow(2).subtract(modulus).sqrtAndRemainder();
-            h = result[0];
-            reminder = result[1];
+            h = k.add(step).pow(2).subtract(modulus).sqrt();
             step = step.add(BigInteger.ONE);
-        }while (! reminder.equals(BigInteger.ZERO));
+        }while (!h.pow(2).equals(k.pow(2).subtract(modulus)));
 
         k = k.add(step).subtract(BigInteger.ONE);
         BigInteger p = k.add(h), q = k.subtract(h);
