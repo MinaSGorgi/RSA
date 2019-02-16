@@ -26,7 +26,7 @@ public class RSA {
             p = BigInteger.probablePrime(nBits / 2, random);
             q = BigInteger.probablePrime(nBits / 2, random);
             phi = p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-        } while(!publicKey.gcd(phi).equals(BigInteger.ONE));
+        } while(!publicKey.gcd(phi).equals(BigInteger.ONE) || p.equals(q));
 
         modulus    = p.multiply(q);
         privateKey = publicKey.modInverse(phi);
